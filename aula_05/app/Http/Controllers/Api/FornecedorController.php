@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\Controller;
 use App\Models\Fornecedor;
+use Exception;
 use Illuminate\Http\Request;
 
 class FornecedorController extends Controller
@@ -13,7 +14,7 @@ class FornecedorController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Fornecedor::all());
     }
 
     /**
@@ -21,7 +22,23 @@ class FornecedorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $statusHttp = 201;
+        try {
+            $request->validate([
+                "nome"=>"required | string",
+                "email"=>"required | email | unique:fornecedores"
+            ]);
+            $newFornecedor = $request->all();
+            $storedFornecedor = Fornecedor::create($newFornecedor);
+            return response()->json([
+                'message' => 'Fornecedor inserido com sucesso',
+                'data' => $storedFornecedor
+            ], $statusHttp);
+        } catch (Exception $error) {
+            return $this->errorHandler(
+                'Erro ao inserir o fornecedor!!!',
+                $error, $statusHttp);
+        }
     }
 
     /**
@@ -29,7 +46,7 @@ class FornecedorController extends Controller
      */
     public function show(Fornecedor $fornecedor)
     {
-        //
+        return response()->json($fornecedor);
     }
 
     /**
