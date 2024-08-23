@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\Controller;
 use App\Models\Produto;
 use Exception;
 use Illuminate\Http\Request;
@@ -82,21 +82,4 @@ class ProdutoController extends Controller
         }
     }
 
-    private function errorHandler(string $message, Exception $error, int $statusHttp)
-    {
-        $responseError = [
-            'message' => $message,
-        ];
-
-        $statusHttp = 500;
-
-        if (env('APP_DEBUG'))
-            $responseError = [
-                ...$responseError,
-                'error' => $error->getMessage(),
-                'trace' => $error->getTrace()
-            ];
-
-        return response()->json($responseError, $statusHttp);
-    }
 }
