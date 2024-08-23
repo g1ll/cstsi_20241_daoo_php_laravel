@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\Controller;
 use App\Http\Requests\Api\FornecedorStoreRequest;
+use App\Http\Requests\Api\FornecedorUpdateRequest;
 use App\Models\Fornecedor;
 use Exception;
 use Illuminate\Http\Request;
@@ -49,9 +50,19 @@ class FornecedorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Fornecedor $fornecedor)
+    public function update(FornecedorUpdateRequest $request, Fornecedor $fornecedor)
     {
-        //
+        $statusHttp = 200;
+        try {
+            $data = $request->all();
+            $fornecedor->update($data);
+            return response()->json([
+                'message' => 'Fornecedor atualizado com sucesso',
+                'data' => $fornecedor
+            ], $statusHttp);
+        } catch (Exception $error) {
+            return $this->errorHandler('Erro ao atualizar o fornecedor!!!', $error, $statusHttp);
+        }
     }
 
     /**
