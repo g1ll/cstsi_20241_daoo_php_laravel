@@ -14,9 +14,16 @@ class FornecedorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Fornecedor::all());
+
+        $perPage = $request->query('per_page');
+        $paginatedProdutos = Fornecedor::paginate($perPage);
+        $paginatedProdutos->appends([
+            'per_page'=>$perPage
+        ]);
+
+        return response()->json($paginatedProdutos);
     }
 
     /**
@@ -70,6 +77,15 @@ class FornecedorController extends Controller
      */
     public function destroy(Fornecedor $fornecedor)
     {
-        //
+        $statusHttp = 200;
+        try {
+            $fornecedor->delete();
+            return response()->json([
+                'message' => 'Fornecedor removido com sucesso',
+                'data' => $fornecedor
+            ], $statusHttp);
+        } catch (Exception $error) {
+            return $this->errorHandler('Erro ao remover o fornecedor!!!', $error, $statusHttp);
+        }
     }
 }
